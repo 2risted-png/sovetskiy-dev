@@ -1,4 +1,5 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react'; // <-- Добавлено type
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 

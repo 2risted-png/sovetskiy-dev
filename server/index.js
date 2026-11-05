@@ -52,3 +52,9 @@ app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.listen(PORT, () => {
   console.log(`✓ Server: http://localhost:${PORT}`);
 });
+
+const PORT = process.env.PORT || process.env.SERVER_PORT || 3001;
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`✓ Server running on port ${PORT}`);
+});

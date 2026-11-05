@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ReactNode, MouseEvent, CSSProperties } from 'react';
+import type { ReactNode, MouseEvent, CSSProperties } from 'react'; // <-- Добавлено type
 
 export default function LiquidButton({ 
   children, 
@@ -16,12 +16,9 @@ export default function LiquidButton({
 }) {
   const baseClass = "liquid-btn " + variant;
   const Comp: any = href ? motion.a : motion.button;
-  
-  // Проверяем, является ли ссылка внешней (начинается с http)
   const isExternal = href && href.startsWith('http');
 
   const handleClick = (e: MouseEvent) => {
-    // Если это якорная ссылка (#), делаем плавный скролл
     if (href && href.startsWith('#')) {
       e.preventDefault();
       const el = document.querySelector(href);
