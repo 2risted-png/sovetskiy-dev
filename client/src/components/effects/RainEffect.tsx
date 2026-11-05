@@ -1,0 +1,57 @@
+import { useEffect, useRef } from 'react';
+import RaindropFX from 'raindrop-fx';
+
+export default function RainEffect({ backgroundImage }: { backgroundImage: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    let raindropFx: any;
+    let animFrame: number;
+
+    const initRain = () => {
+      if (!canvasRef.current) return;
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+
+      // Если ширина/высота 0, ждем следующего кадра
+      if (rect.width === 0 || rect.height === 0) {
+        animFrame = requestAnimationFrame(initRain);
+        return;
+      }
+
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      try {
+raindropFx = new RaindropFX({
+        canvas: canvas,
+        background: backgroundImage,
+        spawnInterval: [50, 150], // Капли появляются чаще (было 100-300)
+        spawnSize: [80, 200],     // Область появления больше
+        dropSize: [15, 30],       // Капли стали крупнее (было 10-20)
+        viscosity: 0.98,          // Делает капли более "жирными" и медленными
+      });
+      raindropFx.start();
+      } catch (e) {
+        console.warn('WebGL не поддерживается или произошла ошибка дождя:', e);
+      }
+    };
+
+    animFrame = requestAnimationFrame(initRain);
+
+    const onResize = () => {
+      if (!canvasRef.current) return;
+      const newRect = canvasRef.current.getBoundingClientRect();
+      if (raindropFx) raindropFx.resize(newRect.width, newRect.height);
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      window.removeEventListener('resize', onResize);
+      if (raindropFx && raindropFx.stop) raindropFx.stop();
+    };
+  }, [backgroundImage]);
+
+  return <canvas ref={canvasRef} className="rain-canvas" />;
+}
